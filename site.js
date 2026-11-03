@@ -1,5 +1,39 @@
 document.documentElement.classList.add("js");
 
+document.querySelectorAll(".logo").forEach((logo) => {
+  logo.innerHTML = `<span class="brand-mark" aria-hidden="true"><i></i><i></i></span><span class="brand-copy"><strong class="brand-name">XciX</strong><span class="brand-tag">Digital Intelligence</span></span>`;
+  logo.setAttribute("aria-label", "XciX Digitals home");
+});
+
+document.querySelectorAll("a, b").forEach((element) => {
+  element.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) node.textContent = node.textContent.replace(/[↗→]/g, "");
+  });
+});
+
+const header = document.querySelector(".header");
+const nav = header?.querySelector("nav");
+if (header && nav) {
+  const menuButton = document.createElement("button");
+  menuButton.className = "menu-toggle";
+  menuButton.type = "button";
+  menuButton.setAttribute("aria-label", "Open navigation");
+  menuButton.setAttribute("aria-expanded", "false");
+  menuButton.innerHTML = "<span></span><span></span>";
+  header.insertBefore(menuButton, nav);
+  menuButton.addEventListener("click", () => {
+    const open = nav.classList.toggle("is-open");
+    menuButton.classList.toggle("is-open", open);
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+  });
+  nav.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+    nav.classList.remove("is-open");
+    menuButton.classList.remove("is-open");
+    menuButton.setAttribute("aria-expanded", "false");
+  }));
+}
+
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
@@ -7,43 +41,8 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.12 });
-document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
-
-const header = document.querySelector(".header");
-const updateHeader = () => header?.classList.toggle("scrolled", window.scrollY > 28);
-updateHeader();
-window.addEventListener("scroll", updateHeader, { passive: true });
-
-const pointer = { x: 0, y: 0 };
-window.addEventListener("pointermove", (event) => {
-  pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
-  pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
-  document.documentElement.style.setProperty("--pointer-x", `${pointer.x.toFixed(3)}`);
-  document.documentElement.style.setProperty("--pointer-y", `${pointer.y.toFixed(3)}`);
-}, { passive: true });
-
-document.querySelectorAll(".hero, .cta").forEach((section) => {
-  section.addEventListener("pointermove", (event) => {
-    const rect = section.getBoundingClientRect();
-    section.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
-    section.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
-  }, { passive: true });
+}, { threshold: 0.14 });
+document.querySelectorAll(".reveal, .service-card, .project, .detail, .reason-list article").forEach((element) => {
+  element.classList.add("reveal");
+  revealObserver.observe(element);
 });
-
-document.querySelectorAll(".service-card, .project, .detail").forEach((card) => {
-  card.addEventListener("pointermove", (event) => {
-    const rect = card.getBoundingClientRect();
-    const rotateX = ((event.clientY - rect.top) / rect.height - 0.5) * -4;
-    const rotateY = ((event.clientX - rect.left) / rect.width - 0.5) * 4;
-    card.style.setProperty("--tilt-x", `${rotateX.toFixed(2)}deg`);
-    card.style.setProperty("--tilt-y", `${rotateY.toFixed(2)}deg`);
-  }, { passive: true });
-  card.addEventListener("pointerleave", () => {
-    card.style.setProperty("--tilt-x", "0deg");
-    card.style.setProperty("--tilt-y", "0deg");
-  });
-});
-
-const logoLinks = document.querySelectorAll(".logo");
-logoLinks.forEach((logo) => logo.setAttribute("data-brand", "XciX Digitals"));
