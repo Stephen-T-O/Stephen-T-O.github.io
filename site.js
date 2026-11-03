@@ -14,6 +14,13 @@ document.querySelectorAll("a, b").forEach((element) => {
 const header = document.querySelector(".header");
 const nav = header?.querySelector("nav");
 if (header && nav) {
+  if (!nav.querySelector('[href="founder.html"]')) {
+    const founderLink = document.createElement("a");
+    founderLink.href = "founder.html";
+    founderLink.textContent = "Founder";
+    if (location.pathname.endsWith("founder.html")) founderLink.classList.add("active");
+    nav.append(founderLink);
+  }
   const menuButton = document.createElement("button");
   menuButton.className = "menu-toggle";
   menuButton.type = "button";
@@ -45,4 +52,34 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll(".reveal, .service-card, .project, .detail, .reason-list article").forEach((element) => {
   element.classList.add("reveal");
   revealObserver.observe(element);
+});
+
+const whatsapp = document.createElement("a");
+whatsapp.className = "whatsapp-float";
+whatsapp.href = "https://wa.me/2348137477654";
+whatsapp.target = "_blank";
+whatsapp.rel = "noreferrer";
+whatsapp.setAttribute("aria-label", "Chat with XciX Digitals on WhatsApp");
+whatsapp.innerHTML = '<span>WhatsApp</span><b>◔</b>';
+document.body.append(whatsapp);
+
+const contactMethods = document.querySelector(".contact-methods");
+if (contactMethods) {
+  const whatsappMethod = document.createElement("a");
+  whatsappMethod.href = "https://wa.me/2348137477654";
+  whatsappMethod.target = "_blank";
+  whatsappMethod.rel = "noreferrer";
+  whatsappMethod.innerHTML = "<div><p>WhatsApp</p><h3>+234 813 747 7654</h3></div><span></span>";
+  contactMethods.prepend(whatsappMethod);
+}
+
+document.querySelectorAll(".socials").forEach((socials) => {
+  if (!socials.querySelector('[href^="https://wa.me/"]')) {
+    const link = document.createElement("a");
+    link.href = "https://wa.me/2348137477654";
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = "WhatsApp";
+    socials.append(link);
+  }
 });
