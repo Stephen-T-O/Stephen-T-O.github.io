@@ -11,6 +11,12 @@ document.querySelectorAll("a, b").forEach((element) => {
   });
 });
 
+document.querySelectorAll('a[href$=".html"]').forEach((link) => {
+  const target = link.getAttribute("href");
+  if (target && target !== "index.html") link.setAttribute("href", `${target.replace(/\.html$/, "")}/`);
+  if (target === "index.html") link.setAttribute("href", "./");
+});
+
 const header = document.querySelector(".header");
 const nav = header?.querySelector("nav");
 if (header && nav) {
