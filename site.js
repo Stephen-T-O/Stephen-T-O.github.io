@@ -17,6 +17,12 @@ document.querySelectorAll('a[href$=".html"]').forEach((link) => {
   if (target === "index.html") link.setAttribute("href", "./");
 });
 
+// GitHub Pages serves the homepage from the repository root, not /index/.
+// Normalize legacy Home and logo links on nested routes before navigation.
+document.querySelectorAll('a[href="../index/"], a[href="../index"]').forEach((link) => {
+  link.setAttribute("href", "../");
+});
+
 const header = document.querySelector(".header");
 const nav = header?.querySelector("nav");
 if (header && nav) {
