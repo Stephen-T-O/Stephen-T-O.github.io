@@ -22,6 +22,11 @@ document.querySelectorAll('a[href$=".html"]').forEach((link) => {
 document.querySelectorAll('a[href="../index/"], a[href="../index"]').forEach((link) => {
   link.setAttribute("href", "../");
 });
+document.querySelectorAll(".header nav a").forEach((link) => {
+  if (link.textContent.trim().toLowerCase() === "home") {
+    link.setAttribute("href", location.pathname === "/" ? "/" : "../");
+  }
+});
 
 const header = document.querySelector(".header");
 const nav = header?.querySelector("nav");
@@ -109,7 +114,17 @@ const updateScrollState = () => {
   progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
   header?.classList.toggle("scrolled", window.scrollY > 18);
 };
+let previousScrollY = window.scrollY;
+const updateHeaderVisibility = () => {
+  if (!header) return;
+  const currentScrollY = window.scrollY;
+  const movingDown = currentScrollY > previousScrollY;
+  if (currentScrollY > 120 && movingDown && !nav?.classList.contains("is-open")) header.classList.add("nav-hidden");
+  if (!movingDown || currentScrollY <= 120) header.classList.remove("nav-hidden");
+  previousScrollY = currentScrollY;
+};
 window.addEventListener("scroll", updateScrollState, { passive: true });
+window.addEventListener("scroll", updateHeaderVisibility, { passive: true });
 window.addEventListener("resize", updateScrollState, { passive: true });
 updateScrollState();
 
