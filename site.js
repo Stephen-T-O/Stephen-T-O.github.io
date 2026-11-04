@@ -89,3 +89,52 @@ document.querySelectorAll(".socials").forEach((socials) => {
     socials.append(link);
   }
 });
+
+// Site-wide interaction layer: fixed-header state, scroll progress, and subtle pointer motion.
+const progress = document.createElement("div");
+progress.className = "scroll-progress";
+document.body.append(progress);
+const cursorGlow = document.createElement("div");
+cursorGlow.className = "cursor-glow";
+document.body.append(cursorGlow);
+
+const updateScrollState = () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+  header?.classList.toggle("scrolled", window.scrollY > 18);
+};
+window.addEventListener("scroll", updateScrollState, { passive: true });
+window.addEventListener("resize", updateScrollState, { passive: true });
+updateScrollState();
+
+if (window.matchMedia("(pointer:fine)").matches) {
+  window.addEventListener("pointermove", (event) => {
+    cursorGlow.style.left = `${event.clientX}px`;
+    cursorGlow.style.top = `${event.clientY}px`;
+    cursorGlow.style.opacity = "1";
+    document.querySelectorAll(".hero, .cta").forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      section.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+      section.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+    });
+  }, { passive: true });
+  document.querySelectorAll(".service-card, .project, .detail, .value-card, .expertise-grid article").forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      card.style.setProperty("--tilt-x", `${(y * -3).toFixed(2)}deg`);
+      card.style.setProperty("--tilt-y", `${(x * 3).toFixed(2)}deg`);
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--tilt-x", "0deg");
+      card.style.setProperty("--tilt-y", "0deg");
+    });
+  });
+}
+
+// Stagger visible elements so each page feels composed, not mechanically animated.
+document.querySelectorAll(".reveal").forEach((element, index) => {
+  element.style.transitionDelay = `${Math.min(index % 5, 4) * 70}ms`;
+});
